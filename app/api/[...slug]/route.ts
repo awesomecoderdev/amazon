@@ -5,7 +5,12 @@ interface Data {
 	name: String;
 }
 
-export async function GET(request: Request) {
+export async function GET(request: Request, context: any) {
+	const { params } = context;
+	const { slug } = params;
+	const query = request?.nextUrl?.searchParams;
+
+	console.log({ slug, params, query });
 	// const req = await fetch("https://jsonplaceholder.typicode.com/posts");
 	// const res = await req.json();
 
