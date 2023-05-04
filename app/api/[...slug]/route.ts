@@ -1,5 +1,7 @@
 import { NextApiResponse } from "next";
 import prisma from "@/prisma/client";
+import { cookies } from "next/headers";
+import Status from "@/lib/http";
 
 interface Data {
 	name: String;
@@ -9,8 +11,10 @@ export async function GET(request: Request, context: any) {
 	const { params } = context;
 	const { slug } = params;
 	const query = request?.nextUrl?.searchParams;
+	const cookieStore = cookies();
+	const token = cookieStore.get("token");
 
-	console.log({ slug, params, query });
+	console.log({ slug, params, query, token: token?.value });
 	// const req = await fetch("https://jsonplaceholder.typicode.com/posts");
 	// const res = await req.json();
 
@@ -59,10 +63,25 @@ export async function GET(request: Request, context: any) {
 		// include: {
 		// 	author: true,
 		// },
-		// cursor: { id: 5 },
-		// take: 3,
+		cursor: { id: 5 },
+		take: 10,
 	});
-	// console.log("request.headers", request.cookies.get("posts"));
 
-	return Response.json({ posts });
+	return new Response(
+		JSON.stringify({
+			status: Status.HTTP_ACCEPTED,
+			data: {
+				count: posts.length,
+				posts,
+			},
+		}),
+		{
+			status: 201,
+			headers: {
+				"Set-Cookie": `token=${btoa(JSON.stringify(posts))},count=${
+					posts.length
+				}`,
+			},
+		}
+	);
 }
