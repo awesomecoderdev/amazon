@@ -69,6 +69,7 @@ export async function GET(request: Request, context: any) {
 
 	return new Response(
 		JSON.stringify({
+			success: true,
 			status: Status.HTTP_ACCEPTED,
 			data: {
 				count: posts.length,

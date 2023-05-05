@@ -9,6 +9,7 @@ export async function GET(request: Request) {
 
 	return new Response(
 		JSON.stringify({
+			success: true,
 			status: Status.HTTP_ACCEPTED,
 			data: {
 				user,

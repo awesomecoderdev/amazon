@@ -1,26 +1,66 @@
+import jwt from "jsonwebtoken";
+import fs from "fs";
 import prisma from "@/prisma/client";
 import { cookies } from "next/headers";
 import Status from "@/lib/http";
+declare module "jsonwebtoken" {
+	export interface JwtPayload {
+		user: object;
+	}
+}
 
 export async function GET(request: Request) {
-	const cookieStore = cookies();
-	const token = cookieStore.get("token");
-	const user = await prisma.user.findFirst();
+	const cookie = cookies();
+	const token = cookie.get("token");
+	// const user = await prisma.user.findFirst();
+	var secret = fs.readFileSync("public.pem"); // get public key
 
-	return new Response(
-		JSON.stringify({
-			status: Status.HTTP_ACCEPTED,
-			data: {
-				user,
-			},
-		}),
-		{
-			status: Status.HTTP_ACCEPTED,
-			// headers: {
-			// 	"Set-Cookie": `token=${btoa(JSON.stringify(posts))},count=${
-			// 		posts.length
-			// 	}`,
-			// },
-		}
-	);
+	if (!token) {
+		return new Response(
+			JSON.stringify({
+				success: false,
+				status: Status.HTTP_UNAUTHORIZED,
+				message: "Unauthorized.",
+			}),
+			{
+				status: Status.HTTP_UNAUTHORIZED,
+			}
+		);
+	}
+
+	try {
+		const { user } = <jwt.JwtPayload>(
+			jwt.verify(`${token.value}`, `${secret}`)
+		);
+
+		return new Response(
+			JSON.stringify({
+				success: true,
+				status: Status.HTTP_ACCEPTED,
+				data: {
+					token: token.value,
+					user: user,
+				},
+			}),
+			{
+				status: Status.HTTP_ACCEPTED,
+				// headers: {
+				// 	"Set-Cookie": `token=${btoa(JSON.stringify(posts))},count=${
+				// 		posts.length
+				// 	}`,
+				// },
+			}
+		);
+	} catch (error) {
+		return new Response(
+			JSON.stringify({
+				success: false,
+				status: Status.HTTP_UNAUTHORIZED,
+				message: "Invalid signature",
+			}),
+			{
+				status: Status.HTTP_UNAUTHORIZED,
+			}
+		);
+	}
 }

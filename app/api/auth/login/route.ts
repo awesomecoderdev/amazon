@@ -1,41 +1,38 @@
 import prisma from "@/prisma/client";
-import { cookies } from "next/headers";
 import Status from "@/lib/http";
 import jwt from "jsonwebtoken";
+import fs from "fs";
 
 export async function GET(request: Request) {
-	const cookieStore = cookies();
-	const token = cookieStore.get("token");
 	const user = await prisma.user.findFirst();
+	// verify a token asymmetric
+	if (!fs.existsSync("public.pem")) {
+		fs.writeFileSync("public.txt", "Hellow world");
+	}
+	var secret = fs.readFileSync("public.pem"); // get public key
+	const timeout: number = parseInt(`${process.env.JWT_TIMEOUT}`) || 60;
 
-	const jwttoken = jwt.sign(
+	const token = jwt.sign(
 		{
 			user,
 		},
-		"awesomecoder.dev",
+		secret,
 		{
-			expiresIn: 60 * 60,
+			expiresIn: 60 * timeout,
 		}
 	);
 
 	return new Response(
 		JSON.stringify({
+			success: true,
 			status: Status.HTTP_ACCEPTED,
-			data: {
-				user,
-				jwttoken,
-				decode: atob(
-					"eyJ1c2VyIjp7ImlkIjoxLCJlbWFpbCI6ImF3ZXNvbWVjb2Rlci5kZXZAZ21haWwuY29tIiwicGFzc3dvcmQiOiJjR0Z6YzNkdmNtUT0iLCJuYW1lIjoiTWQuIElicmFoaW0gS2hvbGlsIiwiYmlvIjpudWxsfSwiaWF0IjoxNjgzMjg1MDM5LCJleHAiOjE2ODMyODg2Mzl9"
-				),
-			},
+			message: Status[200],
 		}),
 		{
 			status: Status.HTTP_ACCEPTED,
-			// headers: {
-			// 	"Set-Cookie": `token=${btoa(JSON.stringify(posts))},count=${
-			// 		posts.length
-			// 	}`,
-			// },
+			headers: {
+				"Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
+			},
 		}
 	);
 }
