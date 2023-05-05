@@ -17,7 +17,8 @@ export async function GET(request: Request) {
 	const BearerToken = request.headers
 		.get("Authorization")
 		?.replace("Bearer ", "");
-	const token = BearerToken ? BearerToken : JwtToken?.value;
+	// const token = BearerToken ? BearerToken : JwtToken?.value; // that enable bearer token also
+	const token = JwtToken?.value;
 
 	if (!token) {
 		return new Response(
