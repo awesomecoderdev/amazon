@@ -59,8 +59,8 @@ export async function GET(request: Request) {
 			JSON.stringify({
 				success: false,
 				status: Status.HTTP_UNAUTHORIZED,
-				// message: "Invalid signature",
-				message: error,
+				message: "Invalid signature",
+				// message: error,
 			}),
 			{
 				status: Status.HTTP_UNAUTHORIZED,
