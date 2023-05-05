@@ -40,7 +40,6 @@ export async function GET(request: Request) {
 				data: {
 					token: token.value,
 					user: user,
-					date: exp ? new Date(exp * 1000) : new Date(),
 				},
 			}),
 			{

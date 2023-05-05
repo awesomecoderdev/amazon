@@ -14,7 +14,10 @@ export async function GET(request: Request) {
 
 	const token = jwt.sign(
 		{
-			user,
+			user: {
+				name: user?.name,
+				email: user?.email,
+			},
 		},
 		secret,
 		{
