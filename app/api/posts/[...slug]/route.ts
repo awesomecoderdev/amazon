@@ -86,3 +86,24 @@ export async function GET(request: Request, context: any) {
 		}
 	);
 }
+
+export async function notAllowed(request: Request) {
+	return new Response(
+		JSON.stringify({
+			success: false,
+			status: Status.HTTP_METHOD_NOT_ALLOWED,
+			message: "Method Not Allowed.",
+		}),
+		{
+			status: Status.HTTP_METHOD_NOT_ALLOWED,
+		}
+	);
+}
+
+export {
+	notAllowed as POST,
+	notAllowed as PUT,
+	notAllowed as PATCH,
+	notAllowed as DELETE,
+	notAllowed as OPTIONS,
+};
