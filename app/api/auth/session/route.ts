@@ -51,6 +51,7 @@ export async function GET(request: Request) {
 			}
 		);
 	} catch (error) {
+		const expired = new Date(2024);
 		return new Response(
 			JSON.stringify({
 				success: false,
@@ -59,6 +60,9 @@ export async function GET(request: Request) {
 			}),
 			{
 				status: Status.HTTP_UNAUTHORIZED,
+				headers: {
+					"Set-Cookie": `token=deleted;Secure; Path=/; Expires=${expired} Domain=localhost`,
+				},
 			}
 		);
 	}

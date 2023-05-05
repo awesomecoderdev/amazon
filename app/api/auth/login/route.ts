@@ -18,8 +18,8 @@ export async function GET(request: Request) {
 		},
 		secret,
 		{
-			// expiresIn: 60 * timeout,
-			expiresIn: 10,
+			expiresIn: 60 * timeout,
+			// expiresIn: 10,
 		}
 	);
 
