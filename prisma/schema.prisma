@@ -12,21 +12,24 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+  id          Int    @id @default(autoincrement())
+  slug        String    @unique
+  title       String?
+  thumbnail   String?
+  content     String?
+  excerpt     String?
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    Int
+  status      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  bio       String?
-  posts     Post[]
+  id          Int   @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  name        String?
+  bio         String?
+  posts       Post[]
 }
