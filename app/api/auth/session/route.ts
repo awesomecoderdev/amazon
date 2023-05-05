@@ -11,9 +11,13 @@ declare module "jsonwebtoken" {
 
 export async function GET(request: Request) {
 	const cookie = cookies();
-	const token = cookie.get("token");
+	const JwtToken = cookie.get("token");
 	// const user = await prisma.user.findFirst();
 	var secret = fs.readFileSync("public.pem"); // get public key
+	const BearerToken = request.headers
+		.get("Authorization")
+		?.replace("Bearer ", "");
+	const token = BearerToken ? BearerToken : JwtToken?.value;
 
 	if (!token) {
 		return new Response(
@@ -30,7 +34,7 @@ export async function GET(request: Request) {
 
 	try {
 		const { user, exp } = <jwt.JwtPayload>(
-			jwt.verify(`${token.value}`, `${secret}`)
+			jwt.verify(`${token}`, `${secret}`)
 		);
 
 		return new Response(
@@ -38,14 +42,14 @@ export async function GET(request: Request) {
 				success: true,
 				status: Status.HTTP_ACCEPTED,
 				data: {
-					token: token.value,
+					token: token,
 					user: user,
 				},
 			}),
 			{
 				status: Status.HTTP_ACCEPTED,
 				headers: {
-					"Set-Cookie": `token=${token.value}; Secure; Path=/; Domain=localhost`,
+					"Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
 				},
 			}
 		);
@@ -55,7 +59,8 @@ export async function GET(request: Request) {
 			JSON.stringify({
 				success: false,
 				status: Status.HTTP_UNAUTHORIZED,
-				message: "Invalid signature",
+				// message: "Invalid signature",
+				message: error,
 			}),
 			{
 				status: Status.HTTP_UNAUTHORIZED,

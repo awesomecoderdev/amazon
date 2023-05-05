@@ -17,6 +17,7 @@ export async function GET(request: Request) {
 			user: {
 				name: user?.name,
 				email: user?.email,
+				role: "user",
 			},
 		},
 		secret,
