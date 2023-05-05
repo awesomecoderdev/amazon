@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 	}
 
 	try {
-		const { user } = <jwt.JwtPayload>(
+		const { user, exp } = <jwt.JwtPayload>(
 			jwt.verify(`${token.value}`, `${secret}`)
 		);
 
@@ -40,15 +40,14 @@ export async function GET(request: Request) {
 				data: {
 					token: token.value,
 					user: user,
+					date: exp ? new Date(exp * 1000) : new Date(),
 				},
 			}),
 			{
 				status: Status.HTTP_ACCEPTED,
-				// headers: {
-				// 	"Set-Cookie": `token=${btoa(JSON.stringify(posts))},count=${
-				// 		posts.length
-				// 	}`,
-				// },
+				headers: {
+					"Set-Cookie": `token=${token.value}; Secure; Path=/; Domain=localhost`,
+				},
 			}
 		);
 	} catch (error) {
