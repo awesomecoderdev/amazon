@@ -7,26 +7,26 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Post {
-  id          Int    @id @default(autoincrement())
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   slug        String    @unique
   title       String?
   thumbnail   String?
   content     String?
   excerpt     String?
   author      User      @relation(fields: [authorId], references: [id])
-  authorId    Int
+  authorId    String    @db.ObjectId
   status      Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
 model User {
-  id          Int   @id @default(autoincrement())
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   email       String   @unique
   password    String
   name        String?

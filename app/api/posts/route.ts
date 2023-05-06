@@ -13,28 +13,28 @@ export async function GET(request: Request) {
 	const token = cookieStore.get("token");
 
 	// console.log({ slug, params, query, token: token?.value });
-	const req = await fetch("https://jsonplaceholder.typicode.com/posts");
-	const res = await req.json();
+	// const req = await fetch("https://jsonplaceholder.typicode.com/posts");
+	// const res = await req.json();
 
-	const posts = res.map((post: any) => {
-		return {
-			title: post.title,
-			slug: `${post.id}`,
-			content: post.body,
-		};
-	});
+	// const posts = res.map((post: any) => {
+	// 	return {
+	// 		title: post.title,
+	// 		slug: `${post.id}`,
+	// 		content: post.body,
+	// 	};
+	// });
 
-	const user = await prisma.user.create({
-		data: {
-			name: "Md. Ibrahim Kholil",
-			email: "awesomecoder.dev@gmail.com",
-			password: "password",
-			posts: {
-				create: posts,
-			},
-		},
-	});
-	console.log("user", user);
+	// const user = await prisma.user.create({
+	// 	data: {
+	// 		name: "Md. Ibrahim Kholil",
+	// 		email: "awesomecoder.dev@gmail.com",
+	// 		password: "password",
+	// 		posts: {
+	// 			create: posts,
+	// 		},
+	// 	},
+	// });
+	// console.log("user", user);
 	// const user = await prisma.user.findFirst();
 
 	// const posts = await prisma.post.create({
@@ -44,27 +44,27 @@ export async function GET(request: Request) {
 	// 	},
 	// });
 
-	// const posts = await prisma.post.findMany({
-	// 	// where: {
-	// 	// 	id: {
-	// 	// 		in: [1, 2],
-	// 	// 	},
-	// 	// },
-	// 	select: {
-	// 		id: true,
-	// 		title: true,
-	// 		author: {
-	// 			select: {
-	// 				name: true,
-	// 			},
-	// 		},
-	// 	},
-	// 	// include: {
-	// 	// 	author: true,
-	// 	// },
-	// 	cursor: { id: 5 },
-	// 	take: 10,
-	// });
+	const posts = await prisma.post.findMany({
+		// where: {
+		// 	id: {
+		// 		in: [1, 2],
+		// 	},
+		// },
+		select: {
+			id: true,
+			title: true,
+			author: {
+				select: {
+					name: true,
+				},
+			},
+		},
+		// include: {
+		// 	author: true,
+		// },
+		// cursor: { id: 5 },
+		take: 10,
+	});
 
 	return new Response(
 		JSON.stringify({
