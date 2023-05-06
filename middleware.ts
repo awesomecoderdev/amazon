@@ -7,21 +7,19 @@ interface RequestCookies {
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-	// let cookies = request.cookies.getAll();
-	const { cookies } = request;
-	console.log({ cookies: cookies.get("token")?.value }); // => 'fast'
+	const { cookies, nextUrl } = request;
+	const { pathname } = nextUrl;
+	const JwtToken = cookies.get("token");
+	const token = JwtToken?.value;
+	var secret = process.env.JWT_SECRET; // get public key
+	console.log("user", secret);
 
-	// Clone the request headers and set a new header `x-hello-from-middleware1`
-	const requestHeaders = new Headers(request.headers);
-	requestHeaders.set("x-hello-from-middleware1", "hello");
+	// console.log({ cookies: cookies.get("token")?.value }); // => 'fast'
+	// console.log({ pathname, token });
 
 	// You can also set request headers in NextResponse.rewrite
 	const response = NextResponse.next();
-
-	// Set a new response header `x-hello-from-middleware2`
-	response.headers.set("x-hello-from-middleware2", "hello");
-	response.headers.set("x-powered-by", "hello");
-	response.headers.append("x-powered-by", "hello");
+	// response.headers.set("x-authorized", String(authorized));
 	return response;
 }
 
@@ -39,7 +37,7 @@ export const config = {
 		 * - _next/image (image optimization files)
 		 * - favicon.ico (favicon file)
 		 */
-		"/((?!api|_next/static|_next/image|favicon.ico).*)",
+		"/((?!api|vercel.svg|_next/static|_next/image|favicon.ico).*)",
 	],
 };
 

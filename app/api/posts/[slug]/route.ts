@@ -12,7 +12,7 @@ export async function GET(request: Request, context: Context) {
 	const { slug } = context.params;
 	const cookie = cookies();
 	const token = cookie.get("token");
-	console.log({ slug });
+	// console.log({ slug });
 
 	const post = await prisma.post.findMany({
 		where: {
@@ -30,8 +30,6 @@ export async function GET(request: Request, context: Context) {
 			},
 		},
 	});
-
-	console.log("post", post);
 
 	if (post.length == 0) {
 		return new Response(
