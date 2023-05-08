@@ -1,5 +1,8 @@
 "use client";
-import React, { Fragment, useEffect } from "react";
+import useSWR from "swr";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "@/lib/axios";
 
 interface AuthUserContextType {
 	Provider: any;
@@ -18,6 +21,7 @@ interface UseNextAuthType {
 
 type Props = {
 	children: React.ReactNode;
+	cookie: object | any;
 };
 
 const AuthUserContext: AuthUserContextType =
@@ -25,55 +29,88 @@ const AuthUserContext: AuthUserContextType =
 		user: null,
 	});
 
-const fetchAuth = async () => {
-	const req = await fetch("/api/auth/session");
-	const res = await req.json();
-	console.log("res", res);
-	return res;
-};
-
-export default async function useNextAuth() {
-	const [user, setUser] = React.useState<object | undefined | null>(null);
+export default function useNextAuth(middleware = null) {
 	const [isLoading, setIsLoading] = React.useState<boolean>(true);
-
-	const clear = () => {
-		setUser(null);
-		setIsLoading(false);
-	};
+	const router = useRouter();
 
 	useEffect(() => {
-		// declare the async data fetching function
-		// // call the function
-		// const result = fetchAuth()
-		// 	// make sure to catch any error
-		// 	.catch(console.error);
-		// // ❌ don't do this, it won't work as you expect!
-		// if (result.success) {
-		// 	setUser(result.data.user);
-		// 	setIsLoading(false);
-		// } else {
-		// 	setUser({
-		// 		name: "demo",
-		// 	});
-		// 	setIsLoading(false);
-		// }
-	}, []);
+		if (user || error) {
+			setIsLoading(false);
+		}
+		// if (middleware == "guest" && user) router.push("/");
+		// if (middleware == "auth" && !user && error) router.push("/login");
+	});
+
+	const {
+		data: user,
+		error,
+		mutate,
+	}: {
+		data: any;
+		error: any;
+		mutate: any;
+	} = useSWR("/api/auth/session", () =>
+		axios
+			.get("/api/auth/session")
+			.then((response) => response.data.data.user)
+	);
+
+	const login = async ({ setErrors, ...props }: { setErrors: any }) => {
+		setErrors([]);
+		axios
+			.post("/api/auth/login", props)
+			.then(() => mutate() && router.push("/"))
+			.catch((error) => {
+				if (error.response.status != 422) throw error;
+				setErrors(Object.values(error.response.data.errors).flat());
+			});
+	};
+
+	const logout = async () => {
+		await axios.post("/api/auth/logout");
+		mutate(null);
+		router.push("/login");
+	};
 
 	return {
 		user,
+		login,
+		logout,
 		isLoading,
-		setUser,
-		setIsLoading,
-	} as {
-		user: any;
-		isLoading: boolean;
 	};
 }
 
-export const AuthContextProvider = async ({ children }: Props) => {
-	const auth = await useNextAuth();
+export const AuthContextProvider = ({ children, cookie }: Props) => {
+	const { user, login, logout, isLoading } = useNextAuth();
+	let option: any = {
+		user,
+		login,
+		logout,
+		isLoading,
+	} as {
+		user: object | null | undefined;
+		login: void | any;
+		logout: void | any;
+		isLoading: boolean;
+	};
+	const token = cookie?.value;
+
+	if (token) {
+		try {
+			const session = JSON.parse(atob(`${token.split(".")[1]}`));
+			if (session?.user?.email) {
+				const userSession = session.user;
+				if (!user) {
+					option.user = userSession;
+				}
+			}
+		} catch (error) {
+			// unauthorized
+		}
+	}
+
 	return (
-		<AuthUserContext.Provider value={auth}>
+		<AuthUserContext.Provider value={option}>
 			{children}
 		</AuthUserContext.Provider>
 	);

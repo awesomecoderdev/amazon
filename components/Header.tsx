@@ -10,8 +10,6 @@ export default function Header(props: any) {
 	const [toggle, setToggle] = useState(false);
 	const { user, isLoading } = useAuth();
 	// const user = auth.user;
-	console.log("user", user);
-	// const user = "";
 
 	return (
 		<>

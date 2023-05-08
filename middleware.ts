@@ -5,6 +5,10 @@ interface RequestCookies {
 	get(cookie: string): object;
 }
 
+function isAuthenticated(request: any) {
+	return false;
+}
+
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
 	const { cookies, nextUrl } = request;
@@ -18,8 +22,30 @@ export function middleware(request: NextRequest) {
 	// console.log({ pathname, token });
 
 	// You can also set request headers in NextResponse.rewrite
-	const response = NextResponse.next();
-	response.headers.set("token", String(token));
+	const requestHeaders = new Headers(request.headers);
+	requestHeaders.set("x-hello-from-middleware1", "hello");
+	// You can also set request headers in NextResponse.rewrite
+	const response = NextResponse.next({
+		request: {
+			// New request headers
+			headers: requestHeaders,
+		},
+	});
+
+	// response.headers.set("token", String(token));
+
+	// Call our authentication function to check the request
+	// if (!isAuthenticated(request)) {
+	// 	// Respond with JSON indicating an error message
+	// 	return new NextResponse(
+	// 		JSON.stringify({
+	// 			success: false,
+	// 			message: "authentication failed",
+	// 		}),
+	// 		{ status: 401, headers: { "content-type": "application/json" } }
+	// 	);
+	// }
+
 	return response;
 }
 

@@ -95,7 +95,8 @@ export async function POST(request: Request, context: any) {
 				{
 					status: Status.HTTP_CREATED,
 					headers: {
-						"Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
+						// "Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
+						"Set-Cookie": `token=${token}; Path=/;`,
 					},
 				}
 			);

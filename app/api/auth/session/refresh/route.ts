@@ -68,7 +68,8 @@ export async function POST(request: Request, context: any) {
 			{
 				status: Status.HTTP_ACCEPTED,
 				headers: {
-					"Set-Cookie": `token=${refresh}; Secure; Path=/; Domain=localhost`,
+					"Set-Cookie": `token=${token}; Path=/;`,
+					// "Set-Cookie": `token=${refresh}; Secure; Path=/; Domain=localhost`,
 				},
 			}
 		);

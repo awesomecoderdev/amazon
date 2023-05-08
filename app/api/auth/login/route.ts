@@ -9,7 +9,8 @@ export async function GET(request: Request) {
 	if (!fs.existsSync("public.pem")) {
 		fs.writeFileSync("public.txt", "Hellow world");
 	}
-	var secret = fs.readFileSync("public.pem"); // get public key
+	// var secret = fs.readFileSync("public.pem"); // get public key
+	const secret = `${process.env.JWT_SECRET}`;
 	const timeout: number = parseInt(`${process.env.JWT_TIMEOUT}`) || 60;
 
 	const token = jwt.sign(
@@ -31,13 +32,14 @@ export async function GET(request: Request) {
 		JSON.stringify({
 			success: true,
 			status: Status.HTTP_ACCEPTED,
-			message: Status[200],
+			message: "Successfully Authorized.",
 		}),
 		{
 			status: Status.HTTP_ACCEPTED,
 			headers: {
+				"Set-Cookie": `token=${token}; Path=/;`,
 				// "Set-Cookie": `token=${token}; Expires=${expired}  Secure; Path=/; Domain=localhost`,
-				"Set-Cookie": `token=${token}; Expires=${expired}; Path=/;`,
+				// "Set-Cookie": `token=${token}; Expires=${expired}; Path=/;`,
 			},
 		}
 	);
