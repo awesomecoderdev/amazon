@@ -12,14 +12,14 @@ export function middleware(request: NextRequest) {
 	const JwtToken = cookies.get("token");
 	const token = JwtToken?.value;
 	var secret = process.env.JWT_SECRET; // get public key
-	console.log("user", secret);
+	// console.log("token", token);
 
 	// console.log({ cookies: cookies.get("token")?.value }); // => 'fast'
 	// console.log({ pathname, token });
 
 	// You can also set request headers in NextResponse.rewrite
 	const response = NextResponse.next();
-	// response.headers.set("x-authorized", String(authorized));
+	response.headers.set("token", String(token));
 	return response;
 }
 

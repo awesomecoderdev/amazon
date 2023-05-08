@@ -1,12 +1,17 @@
 "use client";
 
+import { useAuth } from "@/context/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Header(props) {
+export default function Header(props: any) {
 	const { title } = props;
 	const [toggle, setToggle] = useState(false);
+	const { user, isLoading } = useAuth();
+	// const user = auth.user;
+	console.log("user", user);
+	// const user = "";
 
 	return (
 		<>
@@ -98,13 +103,13 @@ export default function Header(props) {
 								href="#"
 								className="block text-gray-600 transition-colors duration-300 dark:text-white md:px-6 hover:text-blue-500 dark:hover:text-blue-400"
 							>
-								Account
+								{user ? "Account" : "Login"}
 							</a>
 
 							<button className="w-full px-5 py-3 transition-colors duration-300 bg-gray-100 rounded-md dark:bg-gray-800 md:w-auto md:mx-6 hover:bg-gray-200 dark:hover:bg-gray-700">
 								<div className="flex items-center justify-center -mx-1">
 									<p className="mx-1 text-sm text-gray-600 dark:text-white">
-										Coming Soon on
+										{user?.name}
 									</p>
 
 									<svg

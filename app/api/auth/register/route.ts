@@ -101,7 +101,6 @@ export async function POST(request: Request, context: any) {
 			);
 		}
 	} catch (error) {
-		console.log("error", error);
 		return new Response(
 			JSON.stringify({
 				success: true,

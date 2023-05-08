@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 			// expiresIn: 10,
 		}
 	);
-
+	const expired = new Date();
 	return new Response(
 		JSON.stringify({
 			success: true,
@@ -36,7 +36,8 @@ export async function GET(request: Request) {
 		{
 			status: Status.HTTP_ACCEPTED,
 			headers: {
-				"Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
+				// "Set-Cookie": `token=${token}; Expires=${expired}  Secure; Path=/; Domain=localhost`,
+				"Set-Cookie": `token=${token}; Expires=${expired}; Path=/;`,
 			},
 		}
 	);

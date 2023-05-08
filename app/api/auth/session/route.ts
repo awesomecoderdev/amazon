@@ -43,15 +43,15 @@ export async function GET(request: Request) {
 				success: true,
 				status: Status.HTTP_ACCEPTED,
 				data: {
-					token: token,
+					// token: token,
 					user: user,
 				},
 			}),
 			{
 				status: Status.HTTP_ACCEPTED,
-				headers: {
-					"Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
-				},
+				// headers: {
+				// 	"Set-Cookie": `token=${token}; Secure; Path=/; Domain=localhost`,
+				// },
 			}
 		);
 	} catch (error) {
