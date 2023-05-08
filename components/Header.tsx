@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/context/auth";
 
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { Menu, Popover, Transition } from "@headlessui/react";
 import {
 	ArrowLongLeftIcon,
@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useNavigationEvent } from "@/lib/useNavigationEvent";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -39,6 +40,13 @@ const userNavigation = [
 
 export default function Header({ auth }: { auth: any }) {
 	const { user, isLoading, logout } = useAuth();
+	const buttonRef = useRef<any>(null);
+	const closeNavigation = () => {
+		// buttonRef.current?.focus();
+		buttonRef.current?.click();
+	};
+	useNavigationEvent(() => closeNavigation());
+
 	return (
 		<>
 			<header className="bg-white shadow">
@@ -142,12 +150,15 @@ export default function Header({ auth }: { auth: any }) {
 														/>
 													</div>
 													<div className="-mr-2">
-														<Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+														<Popover.Button
+															ref={buttonRef}
+															className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+														>
 															<span className="sr-only">
 																Close menu
 															</span>
 															<XMarkIcon
-																className="h-6 w-6"
+																className="h-6 w-6 pointer-events-none"
 																aria-hidden="true"
 															/>
 														</Popover.Button>
@@ -166,57 +177,89 @@ export default function Header({ auth }: { auth: any }) {
 												</div>
 											</div>
 											<div className="pt-4 pb-2">
-												<div className="flex items-center px-5">
-													<div className="flex-shrink-0">
-														<img
-															className="h-10 w-10 rounded-full"
-															src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-															alt=""
-														/>
-													</div>
-													<div className="ml-3">
-														<div className="text-base font-medium text-gray-800">
-															{user?.name}
+												{user && auth ? (
+													<Fragment>
+														<div className="flex items-center px-5">
+															<div className="flex-shrink-0">
+																<img
+																	className="h-10 w-10 rounded-full"
+																	src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+																	alt=""
+																/>
+															</div>
+															<div className="ml-3">
+																<div className="text-base font-medium text-gray-800">
+																	{user?.name}
+																</div>
+																<div className="text-sm font-medium text-gray-500">
+																	{
+																		user?.email
+																	}
+																</div>
+															</div>
+															<button
+																type="button"
+																className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+															>
+																<span className="sr-only">
+																	View
+																	notifications
+																</span>
+																<BellIcon
+																	className="h-6 w-6"
+																	aria-hidden="true"
+																/>
+															</button>
 														</div>
-														<div className="text-sm font-medium text-gray-500">
-															{user?.email}
-														</div>
-													</div>
-													<button
-														type="button"
-														className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-													>
-														<span className="sr-only">
-															View notifications
-														</span>
-														<BellIcon
-															className="h-6 w-6"
-															aria-hidden="true"
-														/>
-													</button>
-												</div>
-												<div className="mt-3 space-y-1 px-2">
-													{userNavigation.map(
-														(item) => (
-															<Link
-																key={item.name}
-																href={item.href}
+														<div className="mt-3 space-y-1 px-2">
+															{userNavigation.map(
+																(item) => (
+																	<Link
+																		key={
+																			item.name
+																		}
+																		href={
+																			item.href
+																		}
+																		className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
+																	>
+																		{
+																			item.name
+																		}
+																	</Link>
+																)
+															)}
+															<a
+																href="javascript:void(0);"
+																onClick={(e) =>
+																	logout()
+																}
 																className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
 															>
-																{item.name}
+																Sign out
+															</a>
+														</div>
+													</Fragment>
+												) : (
+													<Fragment>
+														{/* <div className="hidden lg:ml-4 lg:flex lg:items-center">
+															<Link
+																href="/login"
+																className="flex-shrink-0 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+															>
+																Login
 															</Link>
-														)
-													)}
-													<a
-														href="javascript:void(0);"
-														onClick={(e) =>
-															logout()
-														}
-														className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
-													>
-														Sign out
-													</a>
-												</div>
+														</div> */}
+														<div className="mt-3 space-y-1 px-2">
+															<Link
+																href="/login"
+																className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
+															>
+																Login
+															</Link>
+														</div>
+													</Fragment>
+												)}
 											</div>
 										</div>
 									</Popover.Panel>
