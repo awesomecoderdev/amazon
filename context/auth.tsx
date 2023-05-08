@@ -119,12 +119,12 @@ export const AuthContextProvider = ({ children, cookie }: Props) => {
 
 	if (error) {
 		if (isAccessingSensitiveRoute) {
-			router.refresh();
+			// router.refresh();
 			router.push("/login");
 		}
 	} else {
-		if (isAuthSensitiveRoute) {
-			router.refresh();
+		if (isAuthSensitiveRoute && option?.user) {
+			// router.refresh();
 			router.push("/dashboard");
 		}
 	}

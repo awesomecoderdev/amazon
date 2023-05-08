@@ -18,15 +18,18 @@ export function middleware(req: NextRequest) {
 	var secret = process.env.JWT_SECRET; // get public key
 
 	const isAuth = JwtToken?.value;
-	const isLoginPage = pathname.startsWith("/login");
-	const isRegisterPage = pathname.startsWith("/register");
 
 	const sensitiveRoutes = ["/dashboard"];
 	const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
 		pathname.startsWith(route)
 	);
 
-	if (isLoginPage || isRegisterPage) {
+	const authRoutes = ["/login", "/register"];
+	const isAuthSensitiveRoute = authRoutes.some((route) =>
+		pathname.startsWith(route)
+	);
+
+	if (isAuthSensitiveRoute) {
 		if (isAuth) {
 			return NextResponse.redirect(new URL("/dashboard", req.url));
 		}
