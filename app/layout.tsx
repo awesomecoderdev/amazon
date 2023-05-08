@@ -2,6 +2,7 @@ import { AuthContextProvider } from "@/context/auth";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
+import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,8 +18,11 @@ export default async function RootLayout({
 }) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>
+			<body
+				className={`antialiased text-slate-500 dark:text-slate-400 bg-zinc-50 dark:bg-slate-900 ${inter.className}`}
+			>
 				<AuthContextProvider cookie={cookies().get("token")}>
+					<Header />
 					{children}
 				</AuthContextProvider>
 			</body>

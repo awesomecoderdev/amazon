@@ -1,126 +1,362 @@
 "use client";
 
 import { useAuth } from "@/context/auth";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+
+import { Fragment, useState } from "react";
+import { Menu, Popover, Transition } from "@headlessui/react";
+import {
+	ArrowLongLeftIcon,
+	CheckIcon,
+	HandThumbUpIcon,
+	HomeIcon,
+	MagnifyingGlassIcon,
+	PaperClipIcon,
+	QuestionMarkCircleIcon,
+	UserIcon,
+} from "@heroicons/react/20/solid";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+
+function classNames(...classes) {
+	return classes.filter(Boolean).join(" ");
+}
+
+const navigation = [
+	{ name: "Dashboard", href: "#" },
+	{ name: "Jobs", href: "#" },
+	{ name: "Applicants", href: "#" },
+	{ name: "Company", href: "#" },
+];
+const breadcrumbs = [
+	{ name: "Jobs", href: "#", current: false },
+	{ name: "Front End Developer", href: "#", current: false },
+	{ name: "Applicants", href: "#", current: true },
+];
+const userNavigation = [
+	{ name: "Your Profile", href: "#" },
+	{ name: "Settings", href: "#" },
+	{ name: "Sign out", href: "#" },
+];
+const attachments = [
+	{ name: "resume_front_end_developer.pdf", href: "#" },
+	{ name: "coverletter_front_end_developer.pdf", href: "#" },
+];
+const eventTypes = {
+	applied: { icon: UserIcon, bgColorClass: "bg-gray-400" },
+	advanced: { icon: HandThumbUpIcon, bgColorClass: "bg-blue-500" },
+	completed: { icon: CheckIcon, bgColorClass: "bg-green-500" },
+};
 
 export default function Header(props: any) {
 	const { title } = props;
 	const [toggle, setToggle] = useState(false);
 	const { user, isLoading } = useAuth();
-	// const user = auth.user;
 
 	return (
 		<>
-			<header className="w-full bg-white dark:bg-gray-900 border-b border-zinc-100 dark:border-slate-800">
-				<div className="container relative flex flex-col px-6 py-4 mx-auto">
-					<nav className="md:flex md:items-center md:justify-between">
-						<div className="flex items-center justify-between">
-							<button
-								onClick={(e) => setToggle(!toggle)}
-								className="text-gray-500 md:hidden dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none"
+			<header className="bg-white shadow">
+				<div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
+					<Popover className="flex h-16 justify-between">
+						<div className="flex px-2 lg:px-0">
+							<div className="flex flex-shrink-0 items-center">
+								<a href="#">
+									<img
+										className="h-8 w-auto"
+										src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=600"
+										alt="Your Company"
+									/>
+								</a>
+							</div>
+							<nav
+								aria-label="Global"
+								className="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4"
 							>
-								<span
-									className={`${
-										!toggle ? "hidden" : "block"
-									}`}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth="1.5"
-										stroke="currentColor"
-										className="w-6 h-6"
+								{navigation.map((item) => (
+									<a
+										key={item.name}
+										href={item.href}
+										className="px-3 py-2 text-sm font-medium text-gray-900"
 									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M6 18L18 6M6 6l12 12"
-										/>
-									</svg>
-								</span>
-
-								<span
-									className={`${toggle ? "hidden" : "block"}`}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth="1.5"
-										stroke="currentColor"
-										className="w-6 h-6"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
-										/>
-									</svg>
-								</span>
-							</button>
-
-							<Link href="/" className="text-2xl font-semibold">
-								{/* <img
-									className="w-auto h-6 sm:h-7"
-									src="https://merakiui.com/images/full-logo.svg"
-									alt=""
-								/> */}
-								<span className="text-transparent bg-gradient-to-br bg-clip-text from-teal-500 via-indigo-500 to-sky-500 dark:from-teal-200 dark:via-indigo-300 dark:to-sky-500">
-									Product
-								</span>
-
-								<span className="text-transparent bg-gradient-to-tr bg-clip-text from-primary-500 via-pink-500 to-red-500 dark:from-sky-300 dark:via-pink-300 dark:to-red-500">
-									Islands
-								</span>
-							</Link>
+										{item.name}
+									</a>
+								))}
+							</nav>
 						</div>
-
-						<div
-							className={`${
-								toggle
-									? "translate-x-0 opacity-100 "
-									: "opacity-0 -translate-x-full"
-							} absolute inset-x-0 z-20 w-full px-6 py-8 mt-8 space-y-6 transition-all duration-300 ease-in-out bg-white dark:bg-gray-900 top-16 md:bg-transparent md:dark:bg-transparent md:mt-0 md:p-0 md:top-0 md:relative md:w-auto md:opacity-100 md:translate-x-0 md:space-y-0 md:-mx-6 md:flex md:items-center`}
-						>
-							<a
-								href="#"
-								className="block text-gray-600 transition-colors duration-300 dark:text-white md:px-6 hover:text-blue-500 dark:hover:text-blue-400"
-							>
-								Payment
-							</a>
-							<a
-								href="#"
-								className="block text-gray-600 transition-colors duration-300 dark:text-white md:px-6 hover:text-blue-500 dark:hover:text-blue-400"
-							>
-								Services
-							</a>
-							<a
-								href="#"
-								className="block text-gray-600 transition-colors duration-300 dark:text-white md:px-6 hover:text-blue-500 dark:hover:text-blue-400"
-							>
-								{user ? "Account" : "Login"}
-							</a>
-
-							<button className="w-full px-5 py-3 transition-colors duration-300 bg-gray-100 rounded-md dark:bg-gray-800 md:w-auto md:mx-6 hover:bg-gray-200 dark:hover:bg-gray-700">
-								<div className="flex items-center justify-center -mx-1">
-									<p className="mx-1 text-sm text-gray-600 dark:text-white">
-										{user?.name}
-									</p>
-
-									<svg
-										className="w-6 h-6 mx-1 fill-gray-600 dark:fill-white"
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 384 512"
-									>
-										<path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
-									</svg>
+						<div className="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
+							<div className="w-full max-w-lg lg:max-w-xs">
+								<label htmlFor="search" className="sr-only">
+									Search
+								</label>
+								<div className="relative">
+									<div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+										<MagnifyingGlassIcon
+											className="h-5 w-5 text-gray-400"
+											aria-hidden="true"
+										/>
+									</div>
+									<input
+										id="search"
+										name="search"
+										className="block w-full rounded-md border border-gray-300 bg-white py-2 pl-10 pr-3 leading-5 placeholder-gray-500 shadow-sm focus:border-blue-600 focus:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-600 sm:text-sm"
+										placeholder="Search"
+										type="search"
+									/>
 								</div>
-							</button>
+							</div>
 						</div>
-					</nav>
+						<div className="flex items-center lg:hidden">
+							{/* Mobile menu button */}
+							<Popover.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+								<span className="sr-only">Open main menu</span>
+								<Bars3Icon
+									className="block h-6 w-6"
+									aria-hidden="true"
+								/>
+							</Popover.Button>
+						</div>
+						<Transition.Root as={Fragment}>
+							<div className="lg:hidden">
+								<Transition.Child
+									as={Fragment}
+									enter="duration-150 ease-out"
+									enterFrom="opacity-0"
+									enterTo="opacity-100"
+									leave="duration-150 ease-in"
+									leaveFrom="opacity-100"
+									leaveTo="opacity-0"
+								>
+									<Popover.Overlay
+										className="fixed inset-0 z-20 bg-black bg-opacity-25"
+										aria-hidden="true"
+									/>
+								</Transition.Child>
+
+								<Transition.Child
+									as={Fragment}
+									enter="duration-150 ease-out"
+									enterFrom="opacity-0 scale-95"
+									enterTo="opacity-100 scale-100"
+									leave="duration-150 ease-in"
+									leaveFrom="opacity-100 scale-100"
+									leaveTo="opacity-0 scale-95"
+								>
+									<Popover.Panel
+										focus
+										className="absolute top-0 right-0 z-30 w-full max-w-none origin-top transform p-2 transition"
+									>
+										<div className="divide-y divide-gray-200 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+											<div className="pt-3 pb-2">
+												<div className="flex items-center justify-between px-4">
+													<div>
+														<img
+															className="h-8 w-auto"
+															src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=600"
+															alt="Your Company"
+														/>
+													</div>
+													<div className="-mr-2">
+														<Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500">
+															<span className="sr-only">
+																Close menu
+															</span>
+															<XMarkIcon
+																className="h-6 w-6"
+																aria-hidden="true"
+															/>
+														</Popover.Button>
+													</div>
+												</div>
+												<div className="mt-3 space-y-1 px-2">
+													{navigation.map((item) => (
+														<a
+															key={item.name}
+															href={item.href}
+															className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
+														>
+															{item.name}
+														</a>
+													))}
+												</div>
+											</div>
+											<div className="pt-4 pb-2">
+												<div className="flex items-center px-5">
+													<div className="flex-shrink-0">
+														<img
+															className="h-10 w-10 rounded-full"
+															src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+															alt=""
+														/>
+													</div>
+													<div className="ml-3">
+														<div className="text-base font-medium text-gray-800">
+															{user?.name}
+														</div>
+														<div className="text-sm font-medium text-gray-500">
+															{user?.email}
+														</div>
+													</div>
+													<button
+														type="button"
+														className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+													>
+														<span className="sr-only">
+															View notifications
+														</span>
+														<BellIcon
+															className="h-6 w-6"
+															aria-hidden="true"
+														/>
+													</button>
+												</div>
+												<div className="mt-3 space-y-1 px-2">
+													{userNavigation.map(
+														(item) => (
+															<a
+																key={item.name}
+																href={item.href}
+																className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
+															>
+																{item.name}
+															</a>
+														)
+													)}
+												</div>
+											</div>
+										</div>
+									</Popover.Panel>
+								</Transition.Child>
+							</div>
+						</Transition.Root>
+						<div className="hidden lg:ml-4 lg:flex lg:items-center">
+							<button
+								type="button"
+								className="flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+							>
+								<span className="sr-only">
+									View notifications
+								</span>
+								<BellIcon
+									className="h-6 w-6"
+									aria-hidden="true"
+								/>
+							</button>
+
+							{/* Profile dropdown */}
+							<Menu
+								as="div"
+								className="relative ml-4 flex-shrink-0"
+							>
+								<div>
+									<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+										<span className="sr-only">
+											Open user menu
+										</span>
+										<img
+											className="h-8 w-8 rounded-full"
+											src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+											alt=""
+										/>
+									</Menu.Button>
+								</div>
+								<Transition
+									as={Fragment}
+									enter="transition ease-out duration-100"
+									enterFrom="transform opacity-0 scale-95"
+									enterTo="transform opacity-100 scale-100"
+									leave="transition ease-in duration-75"
+									leaveFrom="transform opacity-100 scale-100"
+									leaveTo="transform opacity-0 scale-95"
+								>
+									<Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+										{userNavigation.map((item) => (
+											<Menu.Item key={item.name}>
+												{({ active }) => (
+													<a
+														href={item.href}
+														className={classNames(
+															active
+																? "bg-gray-100"
+																: "",
+															"block px-4 py-2 text-sm text-gray-700"
+														)}
+													>
+														{item.name}
+													</a>
+												)}
+											</Menu.Item>
+										))}
+									</Menu.Items>
+								</Transition>
+							</Menu>
+						</div>
+					</Popover>
+				</div>
+
+				<div className="mx-auto max-w-7xl px-4 sm:px-6">
+					<div className="border-t border-gray-200 py-3">
+						<nav className="flex" aria-label="Breadcrumb">
+							<div className="flex sm:hidden">
+								<a
+									href="#"
+									className="group inline-flex space-x-3 text-sm font-medium text-gray-500 hover:text-gray-700"
+								>
+									<ArrowLongLeftIcon
+										className="h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-600"
+										aria-hidden="true"
+									/>
+									<span>Back to Applicants</span>
+								</a>
+							</div>
+							<div className="hidden sm:block">
+								<ol
+									role="list"
+									className="flex items-center space-x-4"
+								>
+									<li>
+										<div>
+											<a
+												href="#"
+												className="text-gray-400 hover:text-gray-500"
+											>
+												<HomeIcon
+													className="h-5 w-5 flex-shrink-0"
+													aria-hidden="true"
+												/>
+												<span className="sr-only">
+													Home
+												</span>
+											</a>
+										</div>
+									</li>
+									{breadcrumbs.map((item) => (
+										<li key={item.name}>
+											<div className="flex items-center">
+												<svg
+													className="h-5 w-5 flex-shrink-0 text-gray-300"
+													xmlns="http://www.w3.org/2000/svg"
+													fill="currentColor"
+													viewBox="0 0 20 20"
+													aria-hidden="true"
+												>
+													<path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
+												</svg>
+												<a
+													href={item.href}
+													className="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+													aria-current={
+														item.current
+															? "page"
+															: undefined
+													}
+												>
+													{item.name}
+												</a>
+											</div>
+										</li>
+									))}
+								</ol>
+							</div>
+						</nav>
+					</div>
 				</div>
 			</header>
 		</>

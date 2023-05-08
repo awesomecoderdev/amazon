@@ -10,42 +10,40 @@ function isAuthenticated(request: any) {
 }
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
-	const { cookies, nextUrl } = request;
+export function middleware(req: NextRequest) {
+	const { cookies, nextUrl } = req;
 	const { pathname } = nextUrl;
 	const JwtToken = cookies.get("token");
 	const token = JwtToken?.value;
 	var secret = process.env.JWT_SECRET; // get public key
-	// console.log("token", token);
 
-	// console.log({ cookies: cookies.get("token")?.value }); // => 'fast'
-	// console.log({ pathname, token });
+	const isAuth = JwtToken?.value;
+	const isLoginPage = pathname.startsWith("/login");
+	const isRegisterPage = pathname.startsWith("/register");
 
-	// You can also set request headers in NextResponse.rewrite
-	const requestHeaders = new Headers(request.headers);
-	requestHeaders.set("x-hello-from-middleware1", "hello");
-	// You can also set request headers in NextResponse.rewrite
-	const response = NextResponse.next({
-		request: {
-			// New request headers
-			headers: requestHeaders,
-		},
-	});
+	const sensitiveRoutes = ["/login"];
+	const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
+		pathname.startsWith(route)
+	);
 
-	// response.headers.set("token", String(token));
+	if (isLoginPage || isRegisterPage) {
+		if (isAuth) {
+			return NextResponse.redirect(new URL("/dashboard", req.url));
+		}
+		return NextResponse.next();
+	}
 
-	// Call our authentication function to check the request
-	// if (!isAuthenticated(request)) {
-	// 	// Respond with JSON indicating an error message
-	// 	return new NextResponse(
-	// 		JSON.stringify({
-	// 			success: false,
-	// 			message: "authentication failed",
-	// 		}),
-	// 		{ status: 401, headers: { "content-type": "application/json" } }
-	// 	);
+	if (!isAuth && isAccessingSensitiveRoute) {
+		return NextResponse.redirect(new URL("/login", req.url));
+	}
+
+	// if (pathname === "/") {
+	// 	return NextResponse.redirect(new URL("/dashboard", req.url));
 	// }
 
+	// You can also set request headers in NextResponse.rewrite
+	const response = NextResponse.next();
+	// response.headers.set("token", String(token))
 	return response;
 }
 
@@ -88,7 +86,6 @@ export const config = {
 //       if (isAuth) {
 //         return NextResponse.redirect(new URL('/dashboard', req.url))
 //       }
-
 //       return NextResponse.next()
 //     }
 

@@ -12,13 +12,6 @@ interface CurrentAuthContextType {
 	user: any;
 }
 
-interface UseNextAuthType {
-	user: any;
-	isLoading: boolean;
-	setUser: void;
-	setIsLoading: void;
-}
-
 type Props = {
 	children: React.ReactNode;
 	cookie: object | any;
