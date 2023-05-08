@@ -1,7 +1,7 @@
 "use client";
 import useSWR from "swr";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import axios from "@/lib/axios";
 
 interface AuthUserContextType {
@@ -44,7 +44,7 @@ export default function useNextAuth(middleware = null) {
 		mutate: any;
 	} = useSWR("/api/auth/session", () =>
 		axios
-			.get("/api/auth/session")
+			.post("/api/auth/session")
 			.then((response) => response.data.data.user)
 	);
 
@@ -66,6 +66,7 @@ export default function useNextAuth(middleware = null) {
 	};
 
 	return {
+		error,
 		user,
 		login,
 		logout,
@@ -74,19 +75,24 @@ export default function useNextAuth(middleware = null) {
 }
 
 export const AuthContextProvider = ({ children, cookie }: Props) => {
-	const { user, login, logout, isLoading } = useNextAuth();
+	const router = useRouter();
+	const pathname = usePathname();
+	const token = cookie?.value;
+
+	const { error, user, login, logout, isLoading } = useNextAuth();
 	let option: any = {
 		user,
 		login,
 		logout,
 		isLoading,
+		error,
 	} as {
 		user: object | null | undefined;
 		login: void | any;
 		logout: void | any;
 		isLoading: boolean;
+		error: any;
 	};
-	const token = cookie?.value;
 
 	if (token) {
 		try {
@@ -102,6 +108,27 @@ export const AuthContextProvider = ({ children, cookie }: Props) => {
 		}
 	}
 
+	const authRoutes = ["/login", "/register"];
+	const sensitiveRoutes = ["/dashboard"];
+	const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
+		pathname.startsWith(route)
+	);
+	const isAuthSensitiveRoute = authRoutes.some((route) =>
+		pathname.startsWith(route)
+	);
+
+	if (error) {
+		if (isAccessingSensitiveRoute) {
+			router.refresh();
+			router.push("/login");
+		}
+	} else {
+		if (isAuthSensitiveRoute) {
+			router.refresh();
+			router.push("/dashboard");
+		}
+	}
+
 	return (
 		<AuthUserContext.Provider value={option}>
 			{children}
@@ -109,4 +136,4 @@ export const AuthContextProvider = ({ children, cookie }: Props) => {
 	);
 };
 
-export const useAuth = () => React.useContext(AuthUserContext);
+export const useAuth = () => React.useContext<any>(AuthUserContext);

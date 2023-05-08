@@ -22,7 +22,7 @@ export default async function RootLayout({
 				className={`antialiased text-slate-500 dark:text-slate-400 bg-zinc-50 dark:bg-slate-900 ${inter.className}`}
 			>
 				<AuthContextProvider cookie={cookies().get("token")}>
-					<Header />
+					<Header auth={cookies().get("token")?.value} />
 					{children}
 				</AuthContextProvider>
 			</body>

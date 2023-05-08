@@ -1,5 +1,10 @@
 type Props = {};
 
+export const metadata = {
+	title: "Register",
+	description: "Register new account.",
+};
+
 export default function Page(props: Props) {
 	return (
 		<main className="relative">

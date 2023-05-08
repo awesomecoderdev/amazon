@@ -17,7 +17,7 @@ export const config = {
 export const revalidate = 1;
 // false | 'force-cache' | 0 | number
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
 	const cookie = cookies();
 	const JwtToken = cookie.get("token");
 	// const user = await prisma.user.findFirst();
@@ -114,7 +114,7 @@ export async function notAllowed(request: Request) {
 }
 
 export {
-	notAllowed as POST,
+	notAllowed as GET,
 	notAllowed as PUT,
 	notAllowed as PATCH,
 	notAllowed as DELETE,

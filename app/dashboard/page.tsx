@@ -1,6 +1,4 @@
-"use client";
 import { Fragment } from "react";
-import { Menu, Popover, Transition } from "@headlessui/react";
 import {
 	ArrowLongLeftIcon,
 	CheckIcon,
@@ -504,3 +502,8 @@ export default function Dashboard() {
 		</>
 	);
 }
+
+export const metadata = {
+	title: "Dashboard",
+	description: "Dashboard of account.",
+};

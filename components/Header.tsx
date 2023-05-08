@@ -15,13 +15,14 @@ import {
 	UserIcon,
 } from "@heroicons/react/20/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
 const navigation = [
-	{ name: "Dashboard", href: "#" },
+	{ name: "Dashboard", href: "/dashboard" },
 	{ name: "Jobs", href: "#" },
 	{ name: "Applicants", href: "#" },
 	{ name: "Company", href: "#" },
@@ -34,23 +35,10 @@ const breadcrumbs = [
 const userNavigation = [
 	{ name: "Your Profile", href: "#" },
 	{ name: "Settings", href: "#" },
-	{ name: "Sign out", href: "#" },
 ];
-const attachments = [
-	{ name: "resume_front_end_developer.pdf", href: "#" },
-	{ name: "coverletter_front_end_developer.pdf", href: "#" },
-];
-const eventTypes = {
-	applied: { icon: UserIcon, bgColorClass: "bg-gray-400" },
-	advanced: { icon: HandThumbUpIcon, bgColorClass: "bg-blue-500" },
-	completed: { icon: CheckIcon, bgColorClass: "bg-green-500" },
-};
 
-export default function Header(props: any) {
-	const { title } = props;
-	const [toggle, setToggle] = useState(false);
-	const { user, isLoading } = useAuth();
-
+export default function Header({ auth }: { auth: any }) {
+	const { user, isLoading, logout } = useAuth();
 	return (
 		<>
 			<header className="bg-white shadow">
@@ -58,26 +46,26 @@ export default function Header(props: any) {
 					<Popover className="flex h-16 justify-between">
 						<div className="flex px-2 lg:px-0">
 							<div className="flex flex-shrink-0 items-center">
-								<a href="#">
+								<Link href="/">
 									<img
-										className="h-8 w-auto"
+										className="h-8 w-auto min-w-[3rem]"
 										src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=600"
 										alt="Your Company"
 									/>
-								</a>
+								</Link>
 							</div>
 							<nav
 								aria-label="Global"
 								className="hidden lg:ml-6 lg:flex lg:items-center lg:space-x-4"
 							>
 								{navigation.map((item) => (
-									<a
+									<Link
 										key={item.name}
 										href={item.href}
 										className="px-3 py-2 text-sm font-medium text-gray-900"
 									>
 										{item.name}
-									</a>
+									</Link>
 								))}
 							</nav>
 						</div>
@@ -167,13 +155,13 @@ export default function Header(props: any) {
 												</div>
 												<div className="mt-3 space-y-1 px-2">
 													{navigation.map((item) => (
-														<a
+														<Link
 															key={item.name}
 															href={item.href}
 															className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
 														>
 															{item.name}
-														</a>
+														</Link>
 													))}
 												</div>
 											</div>
@@ -210,15 +198,24 @@ export default function Header(props: any) {
 												<div className="mt-3 space-y-1 px-2">
 													{userNavigation.map(
 														(item) => (
-															<a
+															<Link
 																key={item.name}
 																href={item.href}
 																className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
 															>
 																{item.name}
-															</a>
+															</Link>
 														)
 													)}
+													<a
+														href="javascript:void(0);"
+														onClick={(e) =>
+															logout()
+														}
+														className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-800"
+													>
+														Sign out
+													</a>
 												</div>
 											</div>
 										</div>
@@ -226,68 +223,103 @@ export default function Header(props: any) {
 								</Transition.Child>
 							</div>
 						</Transition.Root>
-						<div className="hidden lg:ml-4 lg:flex lg:items-center">
-							<button
-								type="button"
-								className="flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-							>
-								<span className="sr-only">
-									View notifications
-								</span>
-								<BellIcon
-									className="h-6 w-6"
-									aria-hidden="true"
-								/>
-							</button>
-
-							{/* Profile dropdown */}
-							<Menu
-								as="div"
-								className="relative ml-4 flex-shrink-0"
-							>
-								<div>
-									<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+						{user && auth ? (
+							<Fragment>
+								<div className="hidden lg:ml-4 lg:flex lg:items-center">
+									<button
+										type="button"
+										className="flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+									>
 										<span className="sr-only">
-											Open user menu
+											View notifications
 										</span>
-										<img
-											className="h-8 w-8 rounded-full"
-											src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-											alt=""
+										<BellIcon
+											className="h-6 w-6"
+											aria-hidden="true"
 										/>
-									</Menu.Button>
-								</div>
-								<Transition
-									as={Fragment}
-									enter="transition ease-out duration-100"
-									enterFrom="transform opacity-0 scale-95"
-									enterTo="transform opacity-100 scale-100"
-									leave="transition ease-in duration-75"
-									leaveFrom="transform opacity-100 scale-100"
-									leaveTo="transform opacity-0 scale-95"
-								>
-									<Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-										{userNavigation.map((item) => (
-											<Menu.Item key={item.name}>
-												{({ active }) => (
-													<a
-														href={item.href}
-														className={classNames(
-															active
-																? "bg-gray-100"
-																: "",
-															"block px-4 py-2 text-sm text-gray-700"
+									</button>
+
+									{/* Profile dropdown */}
+									<Menu
+										as="div"
+										className="relative ml-4 flex-shrink-0"
+									>
+										<div>
+											<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+												<span className="sr-only">
+													Open user menu
+												</span>
+												<img
+													className="h-8 w-8 rounded-full"
+													src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+													alt=""
+												/>
+											</Menu.Button>
+										</div>
+										<Transition
+											as={Fragment}
+											enter="transition ease-out duration-100"
+											enterFrom="transform opacity-0 scale-95"
+											enterTo="transform opacity-100 scale-100"
+											leave="transition ease-in duration-75"
+											leaveFrom="transform opacity-100 scale-100"
+											leaveTo="transform opacity-0 scale-95"
+										>
+											<Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+												{userNavigation.map((item) => (
+													<Menu.Item key={item.name}>
+														{({ active }) => (
+															<a
+																href={item.href}
+																className={classNames(
+																	active
+																		? "bg-gray-100"
+																		: "",
+																	"block px-4 py-2 text-sm text-gray-700"
+																)}
+															>
+																{item.name}
+															</a>
 														)}
-													>
-														{item.name}
-													</a>
-												)}
-											</Menu.Item>
-										))}
-									</Menu.Items>
-								</Transition>
-							</Menu>
-						</div>
+													</Menu.Item>
+												))}
+												<Menu.Item>
+													{({ active }) => (
+														<a
+															href="javascript:void(0);"
+															onClick={(e) =>
+																logout()
+															}
+															className={classNames(
+																active
+																	? "bg-gray-100"
+																	: "",
+																"block px-4 py-2 text-sm text-gray-700"
+															)}
+														>
+															Sign out
+														</a>
+													)}
+												</Menu.Item>
+											</Menu.Items>
+										</Transition>
+									</Menu>
+								</div>
+							</Fragment>
+						) : (
+							<Fragment>
+								<div className="hidden lg:ml-4 lg:flex lg:items-center">
+									<Link
+										href="/login"
+										className="flex-shrink-0 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+										rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50
+										"
+									>
+										Login
+									</Link>
+								</div>
+							</Fragment>
+						)}
 					</Popover>
 				</div>
 
