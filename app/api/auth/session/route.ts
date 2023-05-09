@@ -1,21 +1,14 @@
 import jwt from "jsonwebtoken";
-import fs from "fs";
-import prisma from "@/prisma/client";
 import { cookies } from "next/headers";
-import Status from "@/lib/http";
-import { NextRequest } from "next/server";
+import Status, { MethodNotALlowed } from "@/lib/http";
 declare module "jsonwebtoken" {
 	export interface JwtPayload {
 		user: object;
 	}
 }
 
-export const config = {
-	runtime: "edge", // for Edge API Routes only
-	// runtime: "nodejs", // for Edge API Routes only
-};
-export const revalidate = 1;
-// false | 'force-cache' | 0 | number
+// export const runtime = "edge";
+export const revalidate = 2;
 
 export async function POST(request: Request) {
 	const cookie = cookies();
@@ -100,23 +93,10 @@ export async function POST(request: Request) {
 	}
 }
 
-export async function notAllowed(request: Request) {
-	return new Response(
-		JSON.stringify({
-			success: false,
-			status: Status.HTTP_METHOD_NOT_ALLOWED,
-			message: "Method Not Allowed.",
-		}),
-		{
-			status: Status.HTTP_METHOD_NOT_ALLOWED,
-		}
-	);
-}
-
 export {
-	notAllowed as GET,
-	notAllowed as PUT,
-	notAllowed as PATCH,
-	notAllowed as DELETE,
-	notAllowed as OPTIONS,
+	MethodNotALlowed as GET,
+	MethodNotALlowed as PUT,
+	MethodNotALlowed as PATCH,
+	MethodNotALlowed as DELETE,
+	MethodNotALlowed as OPTIONS,
 };

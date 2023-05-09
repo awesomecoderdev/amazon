@@ -1,8 +1,15 @@
 "use client";
 import useSWR from "swr";
+// import fs from "fs";
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import {
+	signInWithEmailAndPassword,
+	GoogleAuthProvider,
+	signInWithPopup,
+} from "firebase/auth";
 import axios from "@/lib/axios";
+import { firebase } from "./firebase";
 
 interface AuthUserContextType {
 	Provider: any;
@@ -21,6 +28,8 @@ const AuthUserContext: AuthUserContextType =
 	React.createContext<CurrentAuthContextType>({
 		user: null,
 	});
+
+const Provider = new GoogleAuthProvider();
 
 export default function useNextAuth(middleware = null) {
 	const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -54,7 +63,7 @@ export default function useNextAuth(middleware = null) {
 			.post("/api/auth/login", props)
 			.then(() => mutate() && router.push("/"))
 			.catch((error) => {
-				if (error.response.status != 422) throw error;
+				if (error.response.status != 422) throw new Error(error);
 				setErrors(Object.values(error.response.data.errors).flat());
 			});
 	};
@@ -83,6 +92,7 @@ export const AuthContextProvider = ({ children, cookie }: Props) => {
 	let option: any = {
 		user,
 		login,
+		signInWithGoogle,
 		logout,
 		isLoading,
 		error,
@@ -90,6 +100,7 @@ export const AuthContextProvider = ({ children, cookie }: Props) => {
 		user: object | null | undefined;
 		login: void | any;
 		logout: void | any;
+		signInWithGoogle: void | any;
 		isLoading: boolean;
 		error: any;
 	};
@@ -137,3 +148,23 @@ export const AuthContextProvider = ({ children, cookie }: Props) => {
 };
 
 export const useAuth = () => React.useContext<any>(AuthUserContext);
+
+export const signInWithGoogle = async () => {
+	try {
+		const { user } = await signInWithPopup(firebase, Provider);
+		const { email } = user;
+		if (user && email) {
+			axios
+				.post("/api/auth/login", user)
+				.then((res) => "")
+				.catch((error) => {
+					if (error.response.status != 422) throw new Error(error);
+					console.log(
+						Object.values(error.response.data.errors).flat()
+					);
+				});
+		}
+	} catch (error) {
+		console.error("An error occured", error);
+	}
+};

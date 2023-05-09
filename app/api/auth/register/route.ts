@@ -1,7 +1,7 @@
 import prisma from "@/prisma/client";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import Status from "@/lib/http";
+import Status, { MethodNotALlowed } from "@/lib/http";
 
 export async function POST(request: Request, context: any) {
 	const cookie = cookies();
@@ -115,23 +115,10 @@ export async function POST(request: Request, context: any) {
 	}
 }
 
-export async function notAllowed(request: Request) {
-	return new Response(
-		JSON.stringify({
-			success: false,
-			status: Status.HTTP_METHOD_NOT_ALLOWED,
-			message: "Method Not Allowed.",
-		}),
-		{
-			status: Status.HTTP_METHOD_NOT_ALLOWED,
-		}
-	);
-}
-
 export {
-	notAllowed as GET,
-	notAllowed as PUT,
-	notAllowed as PATCH,
-	notAllowed as DELETE,
-	notAllowed as OPTIONS,
+	MethodNotALlowed as GET,
+	MethodNotALlowed as PUT,
+	MethodNotALlowed as PATCH,
+	MethodNotALlowed as DELETE,
+	MethodNotALlowed as OPTIONS,
 };

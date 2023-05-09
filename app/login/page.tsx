@@ -1,3 +1,5 @@
+import { signInWithGoogle } from "@/context/auth";
+
 type Props = {};
 
 export const metadata = {
@@ -42,10 +44,11 @@ export default function Page(props: Props) {
 										<div>
 											<a
 												href="#"
+												onClick={signInWithGoogle}
 												className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
 											>
 												<span className="sr-only">
-													Sign in with Facebook
+													Sign in with Google
 												</span>
 												<svg
 													className="h-5 w-5"

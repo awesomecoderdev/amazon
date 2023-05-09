@@ -31,5 +31,6 @@ model User {
   password    String
   name        String?
   bio         String?
+  avatar      String?
   posts       Post[]
 }

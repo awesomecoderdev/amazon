@@ -17,10 +17,7 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useNavigationEvent } from "@/lib/useNavigationEvent";
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "@/lib/helper";
 
 const navigation = [
 	{ name: "Dashboard", href: "/dashboard" },
@@ -42,7 +39,7 @@ export default function Header({ auth }: { auth: any }) {
 	const { user, isLoading, logout } = useAuth();
 	const buttonRef = useRef<any>(null);
 	const closeNavigation = () => {
-		// buttonRef.current?.focus();
+		buttonRef.current?.focus();
 		buttonRef.current?.click();
 	};
 	useNavigationEvent(() => closeNavigation());
@@ -183,8 +180,14 @@ export default function Header({ auth }: { auth: any }) {
 															<div className="flex-shrink-0">
 																<img
 																	className="h-10 w-10 rounded-full"
-																	src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-																	alt=""
+																	src={
+																		user.avatar
+																			? user.avatar
+																			: "https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+																	}
+																	alt={
+																		user?.name
+																	}
 																/>
 															</div>
 															<div className="ml-3">
@@ -294,8 +297,12 @@ export default function Header({ auth }: { auth: any }) {
 												</span>
 												<img
 													className="h-8 w-8 rounded-full"
-													src="https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
-													alt=""
+													src={
+														user.avatar
+															? user.avatar
+															: "https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80"
+													}
+													alt={user?.name}
 												/>
 											</Menu.Button>
 										</div>

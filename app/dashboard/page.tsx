@@ -10,6 +10,7 @@ import {
 	UserIcon,
 } from "@heroicons/react/20/solid";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { classNames } from "@/lib/helper";
 
 const user = {
 	name: "Whitney Francis",
@@ -107,10 +108,6 @@ const comments = [
 		body: "Expedita consequatur sit ea voluptas quo ipsam recusandae. Ab sint et voluptatem repudiandae voluptatem et eveniet. Nihil quas consequatur autem. Perferendis rerum et.",
 	},
 ];
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
 
 export default function Dashboard() {
 	return (

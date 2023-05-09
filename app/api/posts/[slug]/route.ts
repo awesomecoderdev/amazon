@@ -1,6 +1,6 @@
 import prisma from "@/prisma/client";
 import { cookies } from "next/headers";
-import Status from "@/lib/http";
+import Status, { MethodNotALlowed } from "@/lib/http";
 
 interface Context {
 	params: {
@@ -58,23 +58,10 @@ export async function GET(request: Request, context: Context) {
 	);
 }
 
-export async function notAllowed(request: Request) {
-	return new Response(
-		JSON.stringify({
-			success: false,
-			status: Status.HTTP_METHOD_NOT_ALLOWED,
-			message: "Method Not Allowed.",
-		}),
-		{
-			status: Status.HTTP_METHOD_NOT_ALLOWED,
-		}
-	);
-}
-
 export {
-	notAllowed as POST,
-	notAllowed as PUT,
-	notAllowed as PATCH,
-	notAllowed as DELETE,
-	notAllowed as OPTIONS,
+	MethodNotALlowed as POST,
+	MethodNotALlowed as PUT,
+	MethodNotALlowed as PATCH,
+	MethodNotALlowed as DELETE,
+	MethodNotALlowed as OPTIONS,
 };

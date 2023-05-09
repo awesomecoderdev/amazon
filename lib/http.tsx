@@ -129,3 +129,16 @@ class Status {
 
 export { Status };
 export default Status;
+
+export async function MethodNotALlowed(request: Request) {
+	return new Response(
+		JSON.stringify({
+			success: false,
+			status: Status.HTTP_METHOD_NOT_ALLOWED,
+			message: "Method Not Allowed.",
+		}),
+		{
+			status: Status.HTTP_METHOD_NOT_ALLOWED,
+		}
+	);
+}
